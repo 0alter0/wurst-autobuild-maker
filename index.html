@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Wurst AutoBuild System</title>
+
+<style>
+
+body { font-family: Arial, sans-serif; }
+
+#controls { margin-bottom: 20px; }
+
+#controls input { margin-right: 10px; }
+
+#controls button { margin-right: 10px; }
+
+#visualization { width: 100%; height: 500px; }
+
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+</head>
+
+<body>
+
+<div id="controls">
+
+<input type="number" id="x" placeholder="X">
+
+<input type="number" id="y" placeholder="Y">
+
+<input type="number" id="z" placeholder="Z">
+
+<button onclick="addBlock()">Add Block</button>
+
+<button onclick="downloadJSON()">Download JSON</button>
+
+</div>
+
+<div id="visualization"></div>
+
+<script>
+
+let blocks = [];
+
+// Initialize Three.js scene
+
+const scene = new THREE.Scene();
+
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / 500, 0.1, 1000);
+
+const renderer = new THREE.WebGLRenderer();
+
+renderer.setSize(window.innerWidth, 500);
+
+document.getElementById('visualization').appendChild(renderer.domElement);
+
+const geometry = new THREE.BoxGeometry();
+
+const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+
+camera.position.z = 5;
+
+function addBlock() {
+
+const x = parseInt(document.getElementById('x').value);
+
+const y = parseInt(document.getElementById('y').value);
+
+const z = parseInt(document.getElementById('z').value);
+
+blocks.push([x, y, z]);
+
+const cube = new THREE.Mesh(geometry, material);
+
+cube.position.set(x, y, z);
+
+scene.add(cube);
+
+render();
+
+}
+
+function render() {
+
+renderer.render(scene, camera);
+
+}
+
+function downloadJSON() {
+
+const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ blocks }, null, 4));
+
+const downloadAnchorNode = document.createElement('a');
+
+downloadAnchorNode.setAttribute("href", dataStr);
+
+downloadAnchorNode.setAttribute("download", "structure.json");
+
+document.body.appendChild(downloadAnchorNode); // required for firefox
+
+downloadAnchorNode.click();
+
+downloadAnchorNode.remove();
+
+}
+
+render();
+
+</script>
+
+</body>
+
+</html>
